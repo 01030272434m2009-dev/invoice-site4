@@ -244,8 +244,8 @@
 </div>
 
 <script>
-    // 🔗 رابط خادم الـ API الخاص بقاعدة بياناتك (استبدله برابط Railway أو Supabase الخاص بك)
-    const API_BASE_URL = "https://your-api-subdomain.railway.app/api/dashboard";
+    // 🔗 رابط خادم الـ API الخاص بجوجل شيت (تم التحديث للرابط الجديد الخاص بك)
+    const API_BASE_URL = "https://script.google.com/macros/s/AKfycbzE1l5k4AKmw-wfUE8O23lE720qGM50zW1slEvDUKazvygzPnDUlO01OHb_8DIxxniKHQ/exec";
 
     window.addEventListener('DOMContentLoaded', async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -264,12 +264,13 @@
         }
     });
 
-    // دالة جلب البيانات الضخمة من السيرفر وعرضها فورياً في الكروت والجداول
+    // دالة جلب البيانات الضخمة من سيرفر جوجل وعرضها فورياً في الكروت والجداول
     async function fetchFullDashboardFromServer(id) {
         const loader = document.getElementById('loadingStatus');
         loader.style.display = 'flex';
         try {
-            const response = await fetch(`${API_BASE_URL}/${id}`);
+            // تعديل الرابط ليتناسب مع الـ GET Request الخاص بجوجل وإرسال الـ ID كـ Parameter
+            const response = await fetch(`${API_BASE_URL}?id=${id}`);
             if (!response.ok) throw new Error("فشل السيرفر في التجاوب");
             
             const dashboardData = await response.json();
@@ -283,13 +284,13 @@
     }
 
     function renderDashboard(dashboardData) {
-        document.getElementById('lblTotalInvoices').innerText = dashboardData.totalInvoices;
-        document.getElementById('lblTotalStockItems').innerText = dashboardData.totalStockItems;
-        document.getElementById('lblTotalAnimals').innerText = dashboardData.totalAnimals;
-        document.getElementById('lblTotalRevenue').innerText = dashboardData.totalRevenue;
-        document.getElementById('lblSafeIncoming').innerText = dashboardData.safeIncoming;
-        document.getElementById('lblSafeOutgoing').innerText = dashboardData.safeOutgoing;
-        document.getElementById('lblSafeNetBalance').innerText = dashboardData.safeNetBalance;
+        document.getElementById('lblTotalInvoices').innerText = dashboardData.totalInvoices || 0;
+        document.getElementById('lblTotalStockItems').innerText = dashboardData.totalStockItems || 0;
+        document.getElementById('lblTotalAnimals').innerText = dashboardData.totalAnimals || 0;
+        document.getElementById('lblTotalRevenue').innerText = dashboardData.totalRevenue || "0.00 ج.م";
+        document.getElementById('lblSafeIncoming').innerText = dashboardData.safeIncoming || "0.00 ج.م";
+        document.getElementById('lblSafeOutgoing').innerText = dashboardData.safeOutgoing || "0.00 ج.م";
+        document.getElementById('lblSafeNetBalance').innerText = dashboardData.safeNetBalance || "0.00 ج.م";
 
         fillTable('tblDaily', 'noDaily', dashboardData.dailyData, ['رقم الحالة', 'اسم المربي', 'نوع الحيوان', 'التكلفة', 'تاريخ الكشف']);
         fillTable('tblWeekly', 'noWeekly', dashboardData.weeklyData, ['فصيلة الحيوان', 'عدد الكشوفات الأسبوعية', 'إجمالي الدخل المالي']);
@@ -318,10 +319,13 @@
     }
 
     function fillTable(tableId, noDataId, dataList, keys) {
-        if (!dataList || dataList.length === 0) return;
-        document.getElementById(noDataId).style.display = 'none';
         const tbody = document.getElementById(tableId).querySelector('tbody');
         tbody.innerHTML = '';
+        if (!dataList || dataList.length === 0) {
+            document.getElementById(noDataId).style.display = 'block';
+            return;
+        }
+        document.getElementById(noDataId).style.display = 'none';
         dataList.forEach(item => {
             const tr = document.createElement('tr');
             keys.forEach(k => {
