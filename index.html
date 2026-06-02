@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>👑 لوحة الرقابة الشاملة والتحليلات المالية المتقدمة</title>
+    <title>👑 لوحة المراقبة التفاعلية السريعة</title>
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --brand-emerald: #059669;
             --brand-orange: #ea580c;
             --brand-rose: #e11d48;
+            --brand-gold: #b48c32;
             --bg-light: #f1f2f6;
             --text-dark: #0f172a;
             --text-muted: #64748b;
@@ -42,11 +43,12 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--brand-gold);
         }
 
         header h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
         }
 
@@ -84,6 +86,7 @@
             justify-content: space-between;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .card-title {
@@ -106,7 +109,7 @@
             height: 5px;
         }
 
-        /* تخطيط التحليلات الفترية الأربعة */
+        /* تخطيط التحليلات الفترية */
         .analysis-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
@@ -133,6 +136,35 @@
             margin-bottom: 15px;
             border-bottom: 2px solid #f1f5f9;
             padding-bottom: 10px;
+        }
+
+        /* كارت عزل سطر منفرد ديناميكي */
+        .row-detail-box {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            max-width: 700px;
+            margin: 30px auto;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .detail-key {
+            font-weight: bold;
+            color: var(--text-muted);
+        }
+        .detail-value {
+            font-weight: 700;
+            color: var(--brand-dark-slate);
         }
 
         /* الجداول الاحترافية المحدثة */
@@ -190,81 +222,90 @@
 
 <div class="container">
     <header>
-        <h1>👑 نظام المراقبة الذكي وجرد التفاصيل المالية وقواعد البيانات الإدارية</h1>
+        <h1 id="mainTitle">👑 نظام المراقبة الذكي وجرد التفاصيل المالية وقواعد البيانات الإدارية</h1>
         <button class="btn-print" onclick="window.print()">🖨️ طباعة لوحة الرقابة بالكامل</button>
     </header>
 
-    <div class="stats-grid">
-        <div class="card">
-            <div class="card-title">🧾 فواتير الشراء المسجلة</div>
-            <div class="card-value" id="lblTotalInvoices" style="color: var(--brand-blue);">0</div>
-            <div class="card-line" style="background-color: var(--brand-blue);"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">📦 مجموع أصناف المستودعات</div>
-            <div class="card-value" id="lblTotalStockItems" style="color: var(--brand-emerald);">0</div>
-            <div class="card-line" style="background-color: var(--brand-emerald);"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">🧬 إجمالي حالات السونار والعيادة</div>
-            <div class="card-value" id="lblTotalAnimals" style="color: var(--brand-orange);">0</div>
-            <div class="card-line" style="background-color: var(--brand-orange);"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">💰 عوائد كشوفات الحيوانات</div>
-            <div class="card-value" id="lblTotalRevenue" style="color: #7c3aed;">0.00 ج.م</div>
-            <div class="card-line" style="background-color: #7c3aed;"></div>
-        </div>
+    <!-- واجهة عرض تفاصيل حقل محدد ممرر من الـ QR (تظهر فقط عند مسح سطر) -->
+    <div id="rowDetailsView" class="row-detail-box" style="display: none;">
+        <h3 style="color: var(--brand-gold); margin-top: 0; text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 12px; font-size: 18px;">📄 بطاقة معطيات السجل المشفر الفورية</h3>
+        <div id="detailsContainer"></div>
     </div>
 
-    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
-        <div class="card">
-            <div class="card-title">📥 خزينة الوارد (إيرادات السونار التراكمية)</div>
-            <div class="card-value" id="lblSafeIncoming" style="color: var(--brand-emerald);">0.00 ج.م</div>
-            <div class="card-line" style="background-color: var(--brand-emerald);"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">📤 خزينة الصادر (لم يتم احتساب مبالغ المشتريات بعد)</div>
-            <div class="card-value" id="lblSafeOutgoing" style="color: var(--brand-rose);">0.00 ج.م</div>
-            <div class="card-line" style="background-color: var(--brand-rose);"></div>
-        </div>
-        <div class="card">
-            <div class="card-title">💎 صافي أرباح الخزينة الحالية المتاحة</div>
-            <div class="card-value" id="lblSafeNetBalance" style="color: var(--brand-blue);">0.00 ج.م</div>
-            <div class="card-line" style="background-color: var(--brand-blue);"></div>
-        </div>
-    </div>
-
-    <div class="analysis-grid">
-        <div class="section-box">
-            <div class="section-title">📅 الحركات والزيارات اليومية المباشرة (اليوم الحالي)</div>
-            <div class="table-container">
-                <table id="tblDaily"><thead><tr><th>رقم الحالة</th><th>اسم المربي</th><th>نوع الحيوان</th><th>التكلفة</th><th>تاريخ الكشف</th></tr></thead><tbody></tbody></table>
-                <div id="noDaily" class="no-data">لا توجد حركات مسجلة لليوم</div>
+    <!-- لوحة البيانات الكاملة الافتراضية للوحة التحكم -->
+    <div id="fullDashboardView">
+        <div class="stats-grid">
+            <div class="card">
+                <div class="card-title">🧾 فواتير الشراء المسجلة</div>
+                <div class="card-value" id="lblTotalInvoices" style="color: var(--brand-blue);">0</div>
+                <div class="card-line" style="background-color: var(--brand-blue);"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">📦 مجموع أصناف المستودعات</div>
+                <div class="card-value" id="lblTotalStockItems" style="color: var(--brand-emerald);">0</div>
+                <div class="card-line" style="background-color: var(--brand-emerald);"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">🧬 إجمالي حالات السونار والعيادة</div>
+                <div class="card-value" id="lblTotalAnimals" style="color: var(--brand-orange);">0</div>
+                <div class="card-line" style="background-color: var(--brand-orange);"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">💰 عوائد كشوفات الحيوانات</div>
+                <div class="card-value" id="lblTotalRevenue" style="color: #7c3aed;">0.00 ج.م</div>
+                <div class="card-line" style="background-color: #7c3aed;"></div>
             </div>
         </div>
 
-        <div class="section-box">
-            <div class="section-title">📊 التحليلات الإحصائية الأسبوعية المقارنة (آخر 7 أيام)</div>
-            <div class="table-container">
-                <table id="tblWeekly"><thead><tr><th>فصيلة الحيوان</th><th>عدد الكشوفات</th><th>إجمالي الدخل المالي</th></tr></thead><tbody></tbody></table>
-                <div id="noWeekly" class="no-data">لا توجد إحصائيات أسبوعية</div>
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+            <div class="card">
+                <div class="card-title">📥 خزينة الوارد (إيرادات السونار التراكمية)</div>
+                <div class="card-value" id="lblSafeIncoming" style="color: var(--brand-emerald);">0.00 ج.م</div>
+                <div class="card-line" style="background-color: var(--brand-emerald);"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">📤 خزينة الصادر (لم يتم احتساب مبالغ المشتريات بعد)</div>
+                <div class="card-value" id="lblSafeOutgoing" style="color: var(--brand-rose);">0.00 ج.م</div>
+                <div class="card-line" style="background-color: var(--brand-rose);"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">💎 صافي أرباح الخزينة الحالية المتاحة</div>
+                <div class="card-value" id="lblSafeNetBalance" style="color: var(--brand-blue);">0.00 ج.م</div>
+                <div class="card-line" style="background-color: var(--brand-blue);"></div>
             </div>
         </div>
 
-        <div class="section-box">
-            <div class="section-title">📈 المتابعة والتدفقات المالية الشهرية (آخر 30 يوم)</div>
-            <div class="table-container">
-                <table id="tblMonthly"><thead><tr><th>اليوم المسجل</th><th>عدد الزيارات</th><th>العائد المالي الصافي</th></tr></thead><tbody></tbody></table>
-                <div id="noMonthly" class="no-data">لا توجد بيانات للشهر الحالي</div>
+        <div class="analysis-grid">
+            <div class="section-box">
+                <div class="section-title">📅 الحركات والزيارات اليومية المباشرة (اليوم الحالي)</div>
+                <div class="table-container">
+                    <table id="tblDaily"><thead><tr><th>رقم الحالة</th><th>اسم المربي</th><th>نوع الحيوان</th><th>التكلفة</th><th>تاريخ الكشف</th></tr></thead><tbody></tbody></table>
+                    <div id="noDaily" class="no-data">لا توجد حركات مسجلة لليوم</div>
+                </div>
             </div>
-        </div>
 
-        <div class="section-box">
-            <div class="section-title">💎 الحصاد السنوي العام والمقارنات الرأسمالية المستدامة</div>
-            <div class="table-container">
-                <table id="tblYearly"><thead><tr><th>السنة المالية</th><th>الزيارات السنوية</th><th>الأرباح الرأسمالية الإجمالية</th></tr></thead><tbody></tbody></table>
-                <div id="noYearly" class="no-data">لا توجد تقارير سنوية تراكمية</div>
+            <div class="section-box">
+                <div class="section-title">📊 التحليلات الإحصائية الأسبوعية المقارنة (آخر 7 أيام)</div>
+                <div class="table-container">
+                    <table id="tblWeekly"><thead><tr><th>فصيلة الحيوان</th><th>عدد الكشوفات</th><th>إجمالي الدخل المالي</th></tr></thead><tbody></tbody></table>
+                    <div id="noWeekly" class="no-data">لا توجد إحصائيات أسبوعية</div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title">📈 المتابعة والتدفقات المالية الشهرية (آخر 30 يوم)</div>
+                <div class="table-container">
+                    <table id="tblMonthly"><thead><tr><th>اليوم المسجل</th><th>عدد الزيارات</th><th>العائد المالي الصافي</th></tr></thead><tbody></tbody></table>
+                    <div id="noMonthly" class="no-data">لا توجد بيانات للشهر الحالي</div>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="section-title">💎 الحصاد السنوي العام والمقارنات الرأسمالية المستدامة</div>
+                <div class="table-container">
+                    <table id="tblYearly"><thead><tr><th>السنة المالية</th><th>الزيارات السنوية</th><th>الأرباح الرأسمالية الإجمالية</th></tr></thead><tbody></tbody></table>
+                    <div id="noYearly" class="no-data">لا توجد تقارير سنوية تراكمية</div>
+                </div>
             </div>
         </div>
     </div>
@@ -273,8 +314,15 @@
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const encodedData = urlParams.get('payload');
+        
+        // التحقق أولاً: هل الرابط ممرر له معطيات سطر محدد من جدول البيانات؟
+        if (urlParams.size > 0 && !urlParams.has('payload')) {
+            switchToRowMode(urlParams);
+            return;
+        }
 
+        // إذا لم يكن سطر، نقوم بالتحقق من وجود لوحة التحكم الكاملة المشفرة
+        const encodedData = urlParams.get('payload');
         if (!encodedData) return;
 
         try {
@@ -305,6 +353,33 @@
         }
     });
 
+    // دالة بناء وعرض سطر البيانات الفردية القادمة من مسح الـ QR للـ Grid
+    function switchToRowMode(params) {
+        document.getElementById('fullDashboardView').style.display = 'none';
+        document.getElementById('rowDetailsView').style.display = 'block';
+        document.getElementById('mainTitle').innerText = "📱 مستعرض البيانات الفوري للسطر المختار";
+        
+        const container = document.getElementById('detailsContainer');
+        container.innerHTML = '';
+
+        params.forEach((value, key) => {
+            const item = document.createElement('div');
+            item.className = 'detail-item';
+            
+            // إضافة ج.م للمصطلحات المالية تلقائياً
+            let displayValue = value;
+            if((key.includes('التكلفة') || key.includes('السعر') || key.includes('المالي') || key.includes('الأرباح')) && !isNaN(value)) {
+                displayValue = parseFloat(value).toFixed(2) + ' ج.م';
+            }
+
+            item.innerHTML = `
+                <span class="detail-key">${key}</span>
+                <span class="detail-value">${displayValue}</span>
+            `;
+            container.appendChild(item);
+        });
+    }
+
     function fillTable(tableId, noDataId, dataList, keys) {
         if (!dataList || dataList.length === 0) return;
         
@@ -316,7 +391,6 @@
             const tr = document.createElement('tr');
             keys.forEach(k => {
                 const td = document.createElement('td');
-                // معالجة القيم المالية لإضافة ج.م تلقائياً للشكل الجمالي
                 let val = item[k] !== undefined ? item[k] : '-';
                 if(k.includes('التكلفة') || k.includes('المالي') || k.includes('الأرباح')) {
                     if(!isNaN(val) && val !== '-') val = parseFloat(val).toFixed(2) + ' ج.م';
