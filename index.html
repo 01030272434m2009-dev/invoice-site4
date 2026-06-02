@@ -287,7 +287,7 @@
             <div class="section-box">
                 <div class="section-title">📊 التحليلات الإحصائية الأسبوعية المقارنة (آخر 7 أيام)</div>
                 <div class="table-container">
-                    <table id="tblWeekly"><thead><tr><th>فصيلة الحيوان</th><th>عدد الكشوفات</th><th>إجمالي الدخل المالي</th></tr></thead><tbody></tbody></table>
+                    <table id="tblWeekly"><thead><tr><th>فصيلة الحيوان</th><th>عدد الكشوفات الأسبوعية</th><th>إجمالي الدخل المالي</th></tr></thead><tbody></tbody></table>
                     <div id="noWeekly" class="no-data">لا توجد إحصائيات أسبوعية</div>
                 </div>
             </div>
@@ -295,7 +295,7 @@
             <div class="section-box">
                 <div class="section-title">📈 المتابعة والتدفقات المالية الشهرية (آخر 30 يوم)</div>
                 <div class="table-container">
-                    <table id="tblMonthly"><thead><tr><th>اليوم المسجل</th><th>عدد الزيارات</th><th>العائد المالي الصافي</th></tr></thead><tbody></tbody></table>
+                    <table id="tblMonthly"><thead><tr><th>اليوم المسجل</th><th>عدد الزيارات الكلي</th><th>العائد المالي الصافي</th></tr></thead><tbody></tbody></table>
                     <div id="noMonthly" class="no-data">لا توجد بيانات للشهر الحالي</div>
                 </div>
             </div>
@@ -342,7 +342,7 @@
             document.getElementById('lblSafeOutgoing').innerText = dashboardData.safeOutgoing;
             document.getElementById('lblSafeNetBalance').innerText = dashboardData.safeNetBalance;
 
-            // 2. تعبئة الجداول الأربعة
+            // 2. تعبئة الجداول الأربعة بمفاتيح عربية مطابقة 100% لـ SQL الحقيقي
             fillTable('tblDaily', 'noDaily', dashboardData.dailyData, ['رقم الحالة', 'اسم المربي', 'نوع الحيوان', 'التكلفة', 'تاريخ الكشف']);
             fillTable('tblWeekly', 'noWeekly', dashboardData.weeklyData, ['فصيلة الحيوان', 'عدد الكشوفات الأسبوعية', 'إجمالي الدخل المالي']);
             fillTable('tblMonthly', 'noMonthly', dashboardData.monthlyData, ['اليوم المسجل', 'عدد الزيارات الكلي', 'العائد المالي الصافي']);
@@ -368,7 +368,7 @@
             
             // إضافة ج.م للمصطلحات المالية تلقائياً
             let displayValue = value;
-            if((key.includes('التكلفة') || key.includes('السعر') || key.includes('المالي') || key.includes('الأرباح')) && !isNaN(value)) {
+            if((key.includes('التكلفة') || key.includes('السعر') || key.includes('المالي') || key.includes('الأرباح') || key.includes('العائد')) && !isNaN(value) && value.trim() !== '') {
                 displayValue = parseFloat(value).toFixed(2) + ' ج.م';
             }
 
@@ -392,7 +392,7 @@
             keys.forEach(k => {
                 const td = document.createElement('td');
                 let val = item[k] !== undefined ? item[k] : '-';
-                if(k.includes('التكلفة') || k.includes('المالي') || k.includes('الأرباح')) {
+                if(k.includes('التكلفة') || k.includes('المالي') || k.includes('الأرباح') || k.includes('العائد')) {
                     if(!isNaN(val) && val !== '-') val = parseFloat(val).toFixed(2) + ' ج.م';
                 }
                 td.innerText = val;
